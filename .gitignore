@@ -1,1 +1,26 @@
+.firebase/
 .firebase/hosting.c3JjL3B1YmxpY193ZWJzaXRl.cache
+
+# Local virtual env for tooling/tests
+.venv/
+.adsenv/
+venv_gdown/
+
+# Node packages and build artifacts
+node_modules/
+
+# Temporary or local caches
+temp_lighthouse_runner/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
+
+# Performance marketing secret storage
+config/secrets/*.env
+config/secrets/*.json
+config/secrets/*.pkl
+config/secrets/*.db
+config/secrets/*.txt
