@@ -5,6 +5,9 @@
   "targets": {
     "fir-bestpg": {
       "hosting": {
+        "bestpg-admin": [
+          "bestpg-admin"
+        ],
         "public_html_production": [
           "fir-bestpg-production-public"
         ],

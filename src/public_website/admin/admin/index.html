@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Best PG in Dighi · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="auth-gate" id="auth-gate" aria-live="polite">
+    <div class="auth-card">
+      <h2>Sign in to /admin</h2>
+      <p id="auth-message">Use your Google account to unlock router controls.</p>
+      <button type="button" class="btn btn-primary" id="google-signin">Continue with Google</button>
+    </div>
+  </div>
+  <header class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Best PG in Dighi</h1>
+        <p class="subhead">Admin portal</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-ghost logout-button" id="logout-btn">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="tab-list" aria-label="Admin tabs">
+        <button class="tab-button is-active" data-tab="wifi">Wi‑Fi & OTP</button>
+        <button class="tab-button" data-tab="cctv">CCTV & VLAN</button>
+      </nav>
+    </aside>
+
+    <main class="tab-panels">
+    <section class="tab-panel is-active" data-tab="wifi">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Wi-Fi & OTP</h2>
+            <p class="panel-description">
+              Whitelist tenants, choose WhatsApp or manual OTP per tenant, and keep compliance logs queryable.
+            </p>
+          </div>
+          <div class="head-actions">
+            <button class="icon-button whatsapp" id="whatsapp-settings-btn" title="WhatsApp Cloud API">
+              <i class="fab fa-whatsapp"></i>
+            </button>
+            <button class="btn btn-primary" id="add-tenant-btn">Add tenant</button>
+          </div>
+        </div>
+        <div class="sub-tabs" role="tablist">
+          <button class="sub-tab is-active" data-subtab="tenants">Wi‑Fi & OTP</button>
+          <button class="sub-tab" data-subtab="compliance">Compliance logging</button>
+        </div>
+        <section class="sub-panel active" data-subtab-panel="tenants">
+          <p class="form-footnote" id="tenant-status">Loading whitelist…</p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mobile</th>
+                  <th>Nickname</th>
+                  <th>Mode</th>
+                  <th>OTP mode</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tenant-table-body">
+                <tr>
+                  <td colspan="5">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section class="sub-panel" data-subtab-panel="compliance">
+          <div class="panel-head sub-panel-head">
+            <div>
+              <h3>Compliance logging</h3>
+              <p class="panel-description">
+                Daily roll occurs at 02:00 AM IST; sessions are archived to Google Cloud Storage.
+              </p>
+            </div>
+            <div class="head-actions">
+              <span class="timezone-pill" id="report-timestamp">IST</span>
+            </div>
+          </div>
+          <div class="filter-row">
+            <div>
+              <label>From</label>
+              <input type="date" id="report-start" />
+            </div>
+            <div>
+              <label>To</label>
+              <input type="date" id="report-end" />
+            </div>
+            <button class="btn btn-ghost" id="refresh-reports">Refresh</button>
+            <button class="btn btn-primary" id="download-selected" disabled>Download selected</button>
+          </div>
+          <p class="form-footnote" id="report-status">Loading reports…</p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="report-select-all" /></th>
+                  <th>Date</th>
+                  <th>File</th>
+                  <th>Size</th>
+                  <th>Updated</th>
+                  <th>Download</th>
+                </tr>
+              </thead>
+              <tbody id="report-table-body">
+                <tr><td colspan="6">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+  <section class="tab-panel panel" data-tab="cctv">
+    <div class="panel-head">
+      <h2>CCTV & /admin access</h2>
+        <p class="panel-description">
+          CCTV VLAN 50 is isolated; only /admin can open the stream. Logs/footage feed into an immutable archive.
+        </p>
+        <p class="helper-text">On phone or desktop, use “Open CCTV” to launch the stream; “Check VLAN health” pings the backend probe.</p>
+      </div>
+      <ul class="list">
+        <li><i class="fas fa-video"></i> CCTV VLAN 50, only accessible from /admin.</li>
+        <li><i class="fas fa-shield-alt"></i> Footage retention enforced by NVR policy.</li>
+        <li><i class="fas fa-lock"></i> Logs cannot be deleted once archived to GCS.</li>
+        <li><i class="fas fa-user-shield"></i> Admin console reachable via SSO/VPN; default CCTV IP: 192.168.1.64 (update when known).</li>
+      </ul>
+      <div class="cta-row">
+        <button class="btn btn-primary" id="open-cctv">Open /admin/cctv</button>
+        <button class="btn btn-ghost" id="check-vlan">Check VLAN health</button>
+      </div>
+      <div class="field-row compact">
+        <div class="field-input">
+          <label>NVR IP address<div class="field-detail">Only admin workstation can reach this IP (e.g., 192.168.1.64).</div></label>
+          <input type="text" id="cctv-ip" placeholder="192.168.1.64" />
+        </div>
+        <button class="btn btn-ghost" id="save-cctv-ip">Save IP</button>
+      </div>
+      <p class="form-footnote" id="cctv-status">Loading CCTV config…</p>
+    </section>
+  </main>
+  </div>
+  <div class="modal" id="tenant-modal">
+    <div class="modal-card">
+      <button type="button" class="modal-close" data-close-modal>&times;</button>
+      <h3>Add tenant</h3>
+      <form id="tenant-form">
+        <label>Mobile number<div class="field-detail">Use digits only, e.g., 917588498834.</div></label>
+        <input type="text" id="tenant-mobile" placeholder="91XXXXXXXXXX" required />
+        <label>Nickname<div class="field-detail">Friendly label for the resident.</div></label>
+        <input type="text" id="tenant-nickname" placeholder="Room / Tenant name" />
+        <button type="submit" class="btn btn-primary">Whitelist tenant</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="whatsapp-modal">
+    <div class="modal-card large">
+      <button type="button" class="modal-close" data-close-modal>&times;</button>
+      <h3>WhatsApp Cloud API</h3>
+      <p class="form-footnote">
+        Paste the auth key once you have it so the backend Cloud Function can send WhatsApp OTPs. This key is stored securely on Google Cloud.
+      </p>
+      <div class="modal-grid">
+        <div class="field-grid">
+          <label>WhatsApp cloud API key<div class="field-detail">Meta token from Business Manager.</div></label>
+          <input type="text" id="whatsapp-auth-key" placeholder="WhatsApp cloud API key" />
+        </div>
+        <div class="field-grid">
+          <label>WhatsApp phone number ID<div class="field-detail">Defines the sender number in Meta.</div></label>
+          <input type="text" id="whatsapp-phone-id" placeholder="WhatsApp phone number ID" />
+        </div>
+        <div class="field-grid">
+          <label>Sender number<div class="field-detail">E.164 format, default +917559421424.</div></label>
+          <input type="text" id="whatsapp-sender-number" placeholder="+917559421424" value="+917559421424" />
+        </div>
+        <div class="field-grid">
+          <label>Template name<div class="field-detail">Approved WhatsApp template (e.g., pg_wifi_otp).</div></label>
+          <input type="text" id="whatsapp-template-name" placeholder="pg_wifi_otp" value="pg_wifi_otp" />
+        </div>
+      <div class="field-grid">
+        <label>Template language<div class="field-detail">Language code, usually “en”.</div></label>
+        <input type="text" id="whatsapp-template-lang" placeholder="en" value="en" />
+      </div>
+    </div>
+    <p class="form-footnote" id="whatsapp-status">WhatsApp credentials not saved yet.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="save-whatsapp-key">Save WhatsApp settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="otp-modal">
+    <div class="modal-card">
+      <button type="button" class="modal-close" data-close-modal>&times;</button>
+      <h3>Generate manual OTP</h3>
+      <p id="otp-modal-details">Tenant details</p>
+      <div class="otp-display" id="otp-modal-result">No OTP generated yet.</div>
+      <button type="button" class="btn btn-primary" id="otp-modal-generate">Generate &amp; save</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    window.pgAdminConfig = {
+      firebase: {
+        apiKey: 'AIzaSyDa-eZ3YJP8UFkkZRRWtrwLqcFGFkcFoHo',
+        authDomain: 'fir-bestpg.firebaseapp.com',
+        projectId: 'fir-bestpg',
+        storageBucket: 'fir-bestpg.firebasestorage.app',
+        messagingSenderId: '1020918069137',
+        appId: '1:1020918069137:web:68d07d4ad67f955c228c30',
+      },
+      allowedAdmins: ['nishantsah@outlook.in'],
+    requireAuth: true,
+      bypassAuth: window.location.protocol === 'file:',
+    };
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
