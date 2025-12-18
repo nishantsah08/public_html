@@ -17,7 +17,11 @@
         { "source": "/ait-student-housing",      "destination": "/ait-student-housing.html" },
         { "source": "/tcl-employee-accommodation","destination": "/tcl-employee-accommodation.html" },
         { "source": "/student-housing",          "destination": "/student-housing.html" },
-        { "source": "/admin/**",               "target": "bestpg-admin" },
+<<<<<<< HEAD
+        { "source": "/admin/**",               "destination": "/admin/index.html" },
+=======
+        { "source": "/admin/**",               "destination": "/admin/index.html" },
+>>>>>>> 10a0b78 (Add admin portal rewrite)
         { "source": "**",                        "destination": "/404.html" }
       ]
     },
