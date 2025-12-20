@@ -76,6 +76,19 @@ function formatDateTime(value) {
   return `${formatDate(date)} ${hours}:${minutes} IST`;
 }
 
+function normalizeMobileForApi(value) {
+  const digits = String(value || '').replace(/[^\d]/g, '');
+  if (!digits) return '';
+  if (digits.length === 12 && digits.startsWith('91')) return digits.slice(2);
+  if (digits.length === 11 && digits.startsWith('0')) return digits.slice(1);
+  if (digits.length > 10) return digits.slice(-10);
+  return digits;
+}
+
+function isNormalizedMobileValid(normalizedValue) {
+  return /^\d{10}$/.test(normalizedValue);
+}
+
 function init() {
   if (initialized) return;
   initialized = true;
@@ -163,14 +176,20 @@ function bindEvents() {
 
   tenantForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const mobile = tenantMobileInput?.value.trim();
+    const mobile = tenantMobileInput?.value?.trim() || '';
     const nickname = tenantNicknameInput?.value.trim() || 'tenant';
     if (!mobile) return;
     tenantStatus.textContent = 'Adding tenant…';
+    const normalizedMobile = normalizeMobileForApi(mobile);
+    if (!isNormalizedMobileValid(normalizedMobile)) {
+      alert('Enter a valid mobile number (10 to 15 digits).');
+      tenantStatus.textContent = 'Enter a valid mobile number.';
+      return;
+    }
     try {
       await requestJson(WHITELIST_URL, {
         method: 'POST',
-        body: JSON.stringify({ mobile, nickname }),
+        body: JSON.stringify({ mobile: normalizedMobile, nickname }),
       });
       closeModal(tenantModal);
       await loadTenants();
@@ -211,16 +230,17 @@ function bindEvents() {
   tenantTableBody?.addEventListener('change', async (event) => {
     const select = event.target.closest('.mode-select');
     if (!select) return;
-    const mobile = select.dataset.mobile;
-    const newMode = select.value;
-    const previous = select.dataset.previous || select.value;
-    select.dataset.previous = newMode;
-    try {
-      await requestJson(WHITELIST_URL, {
-        method: 'PATCH',
-        body: JSON.stringify({ mobile, authMode: newMode }),
-      });
-      await loadTenants();
+      const mobile = select.dataset.mobile;
+      const normalizedMobile = normalizeMobileForApi(mobile);
+      const newMode = select.value;
+      const previous = select.dataset.previous || select.value;
+      select.dataset.previous = newMode;
+      try {
+        await requestJson(WHITELIST_URL, {
+          method: 'PATCH',
+          body: JSON.stringify({ mobile: normalizedMobile, authMode: newMode }),
+        });
+        await loadTenants();
     } catch (err) {
       console.error(err);
       alert('Failed to update mode');
@@ -232,13 +252,14 @@ function bindEvents() {
     const action = event.target.dataset.action;
     if (!action) return;
     const mobile = event.target.dataset.mobile;
+    const normalizedMobile = normalizeMobileForApi(mobile);
     if (!mobile) return;
     if (action === 'remove') {
       if (!window.confirm(`Remove ${mobile} from whitelist?`)) return;
       try {
         await requestJson(WHITELIST_URL, {
           method: 'DELETE',
-          body: JSON.stringify({ mobile }),
+          body: JSON.stringify({ mobile: normalizedMobile }),
         });
         await loadTenants();
       } catch (err) {

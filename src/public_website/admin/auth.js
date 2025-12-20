@@ -39,7 +39,7 @@
     return;
   }
 
-  const app = firebase.initializeApp(config.firebase);
+  const app = firebase.apps?.length ? firebase.app() : firebase.initializeApp(config.firebase || {});
   const auth = firebase.auth(app);
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
